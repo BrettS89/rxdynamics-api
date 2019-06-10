@@ -1,4 +1,4 @@
-const { pbmAuth } = require('../utilities/auth');
+const { pbmAuth, employeeAuth } = require('../utilities/auth');
 const { handleError } = require('../utilities/errorHandling');
 const transferRequest = require('../services/transferRequest');
 
@@ -42,6 +42,7 @@ exports.initiate = async (req, res) => {
 
 exports.completed = async (req, res) => {
   try {
+    await employeeAuth(req.header(authorization));
     const tRequest = 
       await transferRequest.setTransferRequestComplete(req.params.id);
     await transferRequest.sendCompletedSMS(tRequest);
