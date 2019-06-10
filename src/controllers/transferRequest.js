@@ -1,3 +1,4 @@
+const Pharmacy = require('../models/Pharmacy');
 const { pbmAuth, employeeAuth } = require('../utilities/auth');
 const { handleError } = require('../utilities/errorHandling');
 const transferRequest = require('../services/transferRequest');
