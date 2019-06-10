@@ -74,6 +74,7 @@ exports.initiate = async memberPhoneNumber => {
     t.status = 'initiate';
     await t.save();
   }));
+  
   return true;
 };
 

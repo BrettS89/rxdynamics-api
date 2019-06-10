@@ -27,6 +27,7 @@ exports.promptMember = async (req, res) => {
 
 exports.initiate = async (req, res) => {
   try {
+    console.log(req.body);
     const message = req.body.Body.toLowerCase();
 
     if (message === 'yes') {
