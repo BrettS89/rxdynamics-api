@@ -66,9 +66,11 @@ exports.sendBadTextResponse = async memberPhoneNumber => {
 
 exports.initiate = async memberPhoneNumber => {
   let transferRequests = await TransferRequest.find({ 
-    memberPhoneNumber,
+    memberPhoneNumber: memberPhoneNumber.substring(2, memberPhoneNumber.length),
     status: 'new',
   });
+
+  if (!transferRequests) throw new Error('Could not find any Rx\'s');
 
   await Promise.all(transferRequests.map(async t => {
     const transferRecord = t;
