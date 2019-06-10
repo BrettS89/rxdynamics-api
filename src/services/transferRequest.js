@@ -52,7 +52,7 @@ exports.sendTransferRequestSMS = async data => {
     ${pharmacy.name} at ${pharmacy.address}. If you would like us to 
     transfer your prescription reply with YES to this text message 
     and we'll handle the rest.`;
-
+    console.log(data.memberPhoneNumber);
   await sendSMS(data.memberPhoneNumber, message);
 };
 
