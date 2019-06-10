@@ -51,3 +51,26 @@ exports.completed = async (req, res) => {
     handleError(req, e, 'transferCompleted');
   }
 };
+
+// JUST FOR DEVELOPMENT
+
+exports.addPharmacy = async (req, res) => {
+  try {
+    const pharmacy = new Pharmacy({
+      npi: req.body.npi,
+      chainCode: req.body.chainCode,
+      name: req.body.name,
+      address: req.body.address,
+      lat: req.body.lat,
+      lon: req.body.lon,
+      location: {
+        type: req.body.locationType,
+        coordinates: [req.body.lat, req.body.lon],
+      },
+    });
+    await pharmacy.save();
+    res.status(201).json({ message: 'pharmacy added'})
+  } catch (e) {
+    console.log('Add pharmacy error: ', e);
+  }
+};
