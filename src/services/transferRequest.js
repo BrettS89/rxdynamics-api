@@ -66,16 +66,15 @@ exports.sendBadTextResponse = async memberPhoneNumber => {
 
 exports.initiate = async memberPhoneNumber => {
   let transferRequests = await TransferRequest.find({ 
-    memberPhoneNumber, 
-    status: 'new' 
+    memberPhoneNumber,
+    status: 'new',
   });
 
   await Promise.all(transferRequests.map(async t => {
-    t.status = 'initiate';
-    await t.save();
+    const transferRecord = t;
+    transferRecord.status = 'initiate';
+    await transferRecord.save();
   }));
-  
-  return true;
 };
 
 exports.sendInitiatedSMS = async memberPhoneNumber => {
