@@ -10,7 +10,7 @@ exports.getNearbyPharmacies = async (req, res) => {
       await transferRequest.findNearbyPharmacies(req.params.npi);
     res.status(200).json({ nearByPharmacies });
   } catch (e) {
-    handleError(req, e, 'get nearby pharmacies');
+    handleError(res, e, 'get nearby pharmacies');
   }
 };
 
@@ -21,7 +21,7 @@ exports.promptMember = async (req, res) => {
     await transferRequest.sendTransferRequestSMS(data);
     res.status(200).json({ message: 'transfer prompt sent to member' });
   } catch (e) {
-    handleError(req, e, 'prompt transfer request');
+    handleError(res, e, 'prompt transfer request');
   }
 };
 
@@ -37,7 +37,7 @@ exports.initiate = async (req, res) => {
     }
     res.status(200).json({ message: 'recieved' });
   } catch (e) {
-    handleError(req, e, 'initiateTransfer');
+    handleError(res, e, 'initiateTransfer');
   }
 };
 
@@ -49,7 +49,7 @@ exports.completed = async (req, res) => {
     await transferRequest.sendCompletedSMS(tRequest);
     res.status(200).json({ message: 'success' });
   } catch (e) {
-    handleError(req, e, 'transferCompleted');
+    handleError(res, e, 'transferCompleted');
   }
 };
 
