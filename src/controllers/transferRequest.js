@@ -5,7 +5,7 @@ const transferRequest = require('../services/transferRequest');
 
 exports.getNearbyPharmacies = async (req, res) => {
   try {
-    // await pbmAuth(req.header('authorization'));
+    await pbmAuth(req.header('authorization'));
     const nearByPharmacies =
       await transferRequest.findNearbyPharmacies(req.params.npi);
     res.status(200).json({ nearByPharmacies });
