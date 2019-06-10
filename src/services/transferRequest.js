@@ -15,7 +15,7 @@ exports.findNearbyPharmacies = async npi => {
             p.lat, p.lon,
           ]
         },
-        '$maxDistance': 8046
+        '$maxDistance': 300
       }
     }
   });
