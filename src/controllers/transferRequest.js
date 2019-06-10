@@ -16,10 +16,9 @@ exports.getNearbyPharmacies = async (req, res) => {
 
 exports.promptMember = async (req, res) => {
   try {
-    console.log(req.body);
     const pbm = await pbmAuth(req.header('authorization'));
     await transferRequest.createTransferRequest(req.body, pbm._id);
-    await transferRequest.sendTransferRequestSMS(data);
+    await transferRequest.sendTransferRequestSMS(req.body);
     res.status(200).json({ message: 'transfer prompt sent to member' });
   } catch (e) {
     handleError(res, e, 'prompt transfer request');
