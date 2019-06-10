@@ -8,14 +8,14 @@ exports.findNearbyPharmacies = async npi => {
 
   const nearbyPharmacies = await Pharmacy.find({
     location: {
-      $nearSphere: {
-        $geometry: {
-          type: 'Point',
-          coordinates: [
+      '$nearSphere': {
+        '$geometry': {
+          'type': 'Point',
+          'coordinates': [
             p.lat, p.lon,
           ]
         },
-        $maxDistance: 8046
+        '$maxDistance': 8046
       }
     }
   });
