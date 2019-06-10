@@ -26,9 +26,27 @@ exports.promptMember = async (req, res) => {
 
 exports.initiate = async (req, res) => {
   try {
-    console.log(req.body.Body);
+    const message = req.body.Body.toLowerCase();
+
+    if (message === 'yes') {
+      await transferRequest.initiate(req.body.from);
+      await transferRequest.sendInitiatedSMS(req.body.from);
+    } else {
+      await transferRequest.sendBadTextResponse(req.body.from);
+    }
     res.status(200).json({ message: 'recieved' });
   } catch (e) {
     handleError(req, e, 'initiateTransfer');
+  }
+};
+
+exports.completed = async (req, res) => {
+  try {
+    const tRequest = 
+      await transferRequest.setTransferRequestComplete(req.params.id);
+    await transferRequest.sendCompletedSMS(tRequest);
+    res.status(200).json({ message: 'success' });
+  } catch (e) {
+    handleError(req, e, 'transferCompleted');
   }
 };
