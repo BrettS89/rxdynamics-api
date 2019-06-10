@@ -6,19 +6,16 @@ exports.findNearbyPharmacies = async npi => {
   const p = await Pharmacy.findOne({ npi });
   if (!p) throw new Error({ message: 'pharmacy not found', status: 404 });
 
-  const nearbyPharmacies = await Pharmacy.find({
-    location: {
-      '$nearSphere': {
+  const nearbyPharmacies = await Pharmacy.find({ 
+    'point': { 
+      '$near': {
         '$geometry': {
-          'type': 'Point',
-          'coordinates': [
-            p.lat, p.lon,
-          ]
-        },
-        '$maxDistance': 8046
-      }
+          'type': "Point" ,
+          'coordinates': [p.lat, p.lon] },
+        '$maxDistance': 8000
+       },
     }
-  });
+ });
 
   nearbyPharmacyNpis = nearbyPharmacies.map(p => p.npi);
 
