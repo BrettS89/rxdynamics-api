@@ -65,13 +65,15 @@ exports.sendBadTextResponse = async memberPhoneNumber => {
 };
 
 exports.initiate = async memberPhoneNumber => {
-  let transferRequest = await TransferRequest.find({ 
+  let transferRequests = await TransferRequest.find({ 
     memberPhoneNumber, 
     status: 'new' 
   });
 
-  transferRequest.status = 'initiate';
-  await transferRequest.save();
+  await Promise.all(transferRequests.map(async t => {
+    t.status = 'initiate';
+    await t.save();
+  }));
   return true;
 };
 
