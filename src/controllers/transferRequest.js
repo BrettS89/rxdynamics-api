@@ -27,14 +27,13 @@ exports.promptMember = async (req, res) => {
 
 exports.initiate = async (req, res) => {
   try {
-    console.log(req.body);
     const message = req.body.Body.toLowerCase();
 
     if (message === 'yes') {
-      await transferRequest.initiate(req.body.from);
-      await transferRequest.sendInitiatedSMS(req.body.from);
+      await transferRequest.initiate(req.body.From);
+      await transferRequest.sendInitiatedSMS(req.body.From);
     } else {
-      await transferRequest.sendBadTextResponse(req.body.from);
+      await transferRequest.sendBadTextResponse(req.body.From);
     }
     res.status(200).json({ message: 'recieved' });
   } catch (e) {
