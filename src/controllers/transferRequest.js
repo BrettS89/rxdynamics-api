@@ -13,7 +13,7 @@ exports.getNearbyPharmacies = async (req, res) => {
   }
 };
 
-exports.promptTransferRequest = async (req, res) => {
+exports.promptMember = async (req, res) => {
   try {
     const pbm = await pbmAuth(req.header('authorization'));
     await transferRequest.createTransferRequest(req.body, pbm._id);
@@ -21,5 +21,13 @@ exports.promptTransferRequest = async (req, res) => {
     res.status(200).json({ message: 'transfer prompt sent to member' });
   } catch (e) {
     handleError(req, e, 'prompt transfer request');
+  }
+};
+
+exports.initiate = async (req, res) => {
+  try {
+    console.log(req.body);
+  } catch (e) {
+    handleError(req, e, 'initiateTransfer');
   }
 };

@@ -15,7 +15,7 @@ mongoose.connect(keys.mongoURI, { useNewUrlParser: true });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/transfer', transferRoutes);
+app.use('/transferrequest', transferRoutes);
 app.use('/employee', employeeRoutes);
 app.use('/', appRoutes);
 
