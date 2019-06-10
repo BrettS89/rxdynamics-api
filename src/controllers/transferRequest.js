@@ -65,7 +65,7 @@ exports.addPharmacy = async (req, res) => {
       lat: req.body.lat,
       lon: req.body.lon,
       location: {
-        type: req.body.locationType,
+        type: 'Point',
         coordinates: [req.body.lat, req.body.lon],
       },
     });
