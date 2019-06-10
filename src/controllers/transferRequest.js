@@ -26,7 +26,8 @@ exports.promptMember = async (req, res) => {
 
 exports.initiate = async (req, res) => {
   try {
-    console.log(req.body);
+    console.log(req.body.Body);
+    res.status(200).json({ message: 'recieved' });
   } catch (e) {
     handleError(req, e, 'initiateTransfer');
   }
