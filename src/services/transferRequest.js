@@ -33,6 +33,7 @@ exports.createTransferRequest = async (data, pbm) => {
     transferToPharmacy: data.transferToPharmacy,
     drugs: [data.drug],
     memberPhoneNumber: data.memberPhoneNumber,
+    planSponsor: data.planSponsor,
     status: 'new',
   });
 
