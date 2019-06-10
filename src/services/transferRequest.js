@@ -44,7 +44,7 @@ exports.createTransferRequest = async (data, pbm) => {
 };
 
 exports.sendTransferRequestSMS = async data => {
-  const pharmacy = await Pharmacy.findOne({ npi: data.npi });
+  const pharmacy = await Pharmacy.findOne({ npi: data.transferToPharmacy });
 
   const message = 
     `Greetings from ${data.planSponsor}. 
