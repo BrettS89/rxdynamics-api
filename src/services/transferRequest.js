@@ -26,11 +26,14 @@ exports.findNearbyPharmacies = async npi => {
 };
 
 exports.createTransferRequest = async (data, pbm) => {
+  const transferFromPharmacy = await findOne({ npi: data.transferFromPharmacy });
+  const transferToPharmacy = await findOne({ npi: data.transferToPharmacy });
+
   const transferRequest = new TransferRequest({
     dateCreated: Date.now(),
     pbm,
-    transferFromPharmacy: data.transferFromPharmacy,
-    transferToPharmacy: data.transferToPharmacy,
+    transferFromPharmacy,
+    transferToPharmacy,
     drugs: [data.drug],
     memberPhoneNumber: data.memberPhoneNumber,
     planSponsor: data.planSponsor,
