@@ -16,6 +16,7 @@ exports.getNearbyPharmacies = async (req, res) => {
 
 exports.promptMember = async (req, res) => {
   try {
+    console.log(req.body);
     const pbm = await pbmAuth(req.header('authorization'));
     await transferRequest.createTransferRequest(req.body, pbm._id);
     await transferRequest.sendTransferRequestSMS(data);
