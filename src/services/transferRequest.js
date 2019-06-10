@@ -5,7 +5,7 @@ const { sendSMS } = require('./twilio');
 exports.findNearbyPharmacies = async npi => {
   const p = await Pharmacy.findOne({ npi });
   if (!p) throw new Error({ message: 'pharmacy not found', status: 404 });
-
+  console.log(p.lat, p.lon);
   const nearbyPharmacies = await Pharmacy.find({
     location: {
       $nearSphere: {
