@@ -10,6 +10,7 @@ exports.getNearbyPharmacies = async (req, res) => {
       await transferRequest.findNearbyPharmacies(req.params.npi);
     res.status(200).json({ nearByPharmacies });
   } catch (e) {
+    console.log(JSON.stringify(e));
     handleError(res, e, 'get nearby pharmacies');
   }
 };
