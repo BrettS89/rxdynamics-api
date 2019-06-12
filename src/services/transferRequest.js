@@ -43,7 +43,7 @@ exports.createTransferRequest = async (data, pbm) => {
     status: 'new',
   });
 
-  await transferRequest.save();
+  return await transferRequest.save();
 };
 
 exports.sendTransferRequestSMS = async data => {
