@@ -27,7 +27,7 @@ exports.findNearbyPharmacies = async npi => {
 };
 
 exports.createTransferRequest = async (data, pbm) => {
-  if (!duplicateRxCheck(data, pbm)) return false;
+  if (!await duplicateRxCheck(data, pbm)) return false;
 
   const transferFromPharmacy = await Pharmacy.findOne({ npi: data.transferFromPharmacy });
   const transferToPharmacy = await Pharmacy.findOne({ npi: data.transferToPharmacy });
