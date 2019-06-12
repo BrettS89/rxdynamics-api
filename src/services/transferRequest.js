@@ -1,5 +1,6 @@
 const Pharmacy = require('../models/Pharmacy');
 const TransferRequest = require('../models/TransferRequest');
+const PBM = require('../models/PBM');
 const { sendSMS } = require('./twilio');
 
 exports.findNearbyPharmacies = async npi => {
@@ -26,6 +27,8 @@ exports.findNearbyPharmacies = async npi => {
 };
 
 exports.createTransferRequest = async (data, pbm) => {
+  if (!duplicateRxCheck(data, pbm)) return false;
+
   const transferFromPharmacy = await Pharmacy.findOne({ npi: data.transferFromPharmacy });
   const transferToPharmacy = await Pharmacy.findOne({ npi: data.transferToPharmacy });
 
@@ -45,22 +48,12 @@ exports.createTransferRequest = async (data, pbm) => {
 
 exports.sendTransferRequestSMS = async data => {
   const pharmacy = await Pharmacy.findOne({ npi: data.transferToPharmacy });
-
-  const message = 
-    `Greetings from ${data.planSponsor}. 
-    You can save money by transferring your prescription(s) to 
-    ${pharmacy.name} at ${pharmacy.address}. If you would like us to 
-    transfer your prescription reply with YES to this text message 
-    and we'll handle the rest.`;
-    console.log(data.memberPhoneNumber);
+  const message = `Greetings from ${data.planSponsor}. You can save money by transferring your prescription(s) to ${pharmacy.name} at ${pharmacy.address}. If you would like us to transfer your prescription reply with YES to this text message and we'll handle the rest.`;
   await sendSMS(data.memberPhoneNumber, message);
 };
 
 exports.sendBadTextResponse = async memberPhoneNumber => {
-  const message =
-    `Please respond with a yes if you would like us 
-    to transfer your prescription(s).`;
-
+  const message = `Please respond with a yes if you would like us to transfer your prescription(s).`;
   await sendSMS(memberPhoneNumber, message);
 };
 
@@ -80,13 +73,17 @@ exports.initiate = async memberPhoneNumber => {
 };
 
 exports.sendInitiatedSMS = async memberPhoneNumber => {
-  const message = 
-    `Great! We'll have your prescription(s) transferred there. 
-    The transfer process will take about 10 minutes. 
-    We'll text you when it's finished. Call us at
-    609 213 1708 if you have any questions.`;
-
+  const message = `Great! We'll have your prescription(s) transferred there. The transfer process will take about 10 minutes. We'll text you when it's finished. Call us at 609 213 1708 if you have any questions.`;
   await sendSMS(memberPhoneNumber, message);
+};
+
+exports.employeeClaimTransferRequest = async (id, employee_id) => {
+  let transferRequest = await TransferRequest.findById(id);
+  if (!transferRequest) throw new Error('Could not find transfer request');
+  if (transferRequest.employee)
+    throw new Error({ message: 'already claimed', status: 401 });
+  transferRequest.employee = employee_id;
+  await transferRequest.save();
 };
 
 exports.setTransferRequestComplete = async id => {
@@ -104,11 +101,41 @@ exports.sendCompletedSMS = async transferRequest => {
   const pharmacyName = transferRequest.pharmacy.name;
   const pharmacyAddress = transferRequest.pharmacy.address;
   const memberPhoneNumber = transferRequest.memberPhoneNumber;
-
-  const message = 
-    `Your transfer is complete and your prescription(s)
-    are ready for pick up at ${pharmacyName} ${pharmacyAddress}`;
-
+  const message = `Your transfer is complete and your prescription(s) are ready for pick up at ${pharmacyName} ${pharmacyAddress}`;
   await sendSMS(memberPhoneNumber, message);
 };
 
+// Helper functions
+
+async function duplicateRxCheck(transferRequest, pbm_id) {
+  const pbm = await PBM.findById(pbm_id);
+  const existingTransferRequests = await TransferRequest.find({
+    memberPhoneNumber: transferRequest.memberPhoneNumber,
+    status: 'new',
+  });
+
+  let existingTransferRequest = {};
+
+  if (existingTransferRequests.length === 1) {
+    existingTransferRequest = existingTransferRequests[0];
+
+    if (pbm.transferMultipleRx) {
+      existingTransferRequest.drugs.push(transferRequest.drug);
+    } else {
+      existingTransferRequest.status = 'cancelled';
+    }
+
+    await existingTransferRequest.save();
+    return false;
+  }
+
+  if (existingTransferRequests.length > 1) {
+    await Promise.all(existingTransferRequests.map(async t => {
+      let tReq = t;
+      tReq.status = 'cancelled';
+      await tReq.save();
+    }));
+    throw new Error({ message: 'More than 1 existing transfer requests', status: 500 });
+  }
+  return true;
+}
