@@ -7,7 +7,7 @@ exports.login = async (req, res) => {
     const token = await employeeService.login(req.body);
     res.status(200).json({ token });
   } catch (e) {
-    handleError(req, e, 'employee login');
+    handleError(res, e, 'employee login');
   }
 };
 
@@ -17,7 +17,7 @@ exports.createEmployee = async (req, res) => {
     await employeeService.createAccount(req.body);
     res.status(201).json({ message: 'employee created' });
   } catch (e) {
-    handleError(req, e, 'create employee');
+    handleError(res, e, 'create employee');
   }
 };
 
@@ -27,7 +27,7 @@ exports.changePasswordByEmployee = async (req, res) => {
     await employeeService.changePasswordByEmployee(id, req.body);
     res.status(200).json({ message: 'password changed' });
   } catch (e) {
-    handleError(req, e, 'change password by employee');
+    handleError(res, e, 'change password by employee');
   }
 };
 
@@ -37,6 +37,6 @@ exports.changePasswordByAdmin = async (req, res) => {
     await employeeService.changePasswordByAdmin(req.body);
     res.status(200).json({ message: 'password changed' });
   } catch (e) {
-    handleError(req, e, 'change password by admin');
+    handleError(res, e, 'change password by admin');
   }
 };
