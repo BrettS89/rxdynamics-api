@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt  = require('jsonwebtoken');
 const keys = require('../config');
 const Employee = require('../models/Employee');
 
