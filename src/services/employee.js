@@ -27,7 +27,7 @@ exports.login = async data => {
   if (!bcrypt.compareSync(data.password, employee.password))
     throw new Error('Invalid password');
 
-  const userId = { _id: createdEmployee._id };
+  const userId = { _id: employee._id };
   const token = jwt.sign({ user: userId }, keys.secret);
   return token;
 };
