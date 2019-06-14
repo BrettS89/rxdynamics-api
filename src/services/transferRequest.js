@@ -77,12 +77,33 @@ exports.sendInitiatedSMS = async memberPhoneNumber => {
   await sendSMS(memberPhoneNumber, message);
 };
 
+exports.getOpenTransferRequests = async () => {
+  const transferRequests = await TransferRequest
+    .find({ status: 'initiate', employee: null })
+    .populate('transferToPharmacy', ['_id', 'name', 'address', 'npi', 'phoneNumber'])
+    .populate('transferFromPharmacy', ['_id', 'name', 'address', 'npi', 'phoneNumber'])
+    .sort({ date: 1 })
+    .limit(25)
+    .lean()
+    .exec();
+  
+  return transferRequests;
+};
+
+exports.getMyTransferRequests = async id => {
+  const transferRequests = await TransferRequest
+    .find({ status: 'claimed', employee: id })
+  
+  return transferRequests;
+};
+
 exports.employeeClaimTransferRequest = async (id, employee_id) => {
   let transferRequest = await TransferRequest.findById(id);
   if (!transferRequest) throw new Error('Could not find transfer request');
   if (transferRequest.employee)
     throw new Error({ message: 'already claimed', status: 401 });
   transferRequest.employee = employee_id;
+  transferRequest.status = 'claimed';
   await transferRequest.save();
 };
 
@@ -113,9 +134,7 @@ async function duplicateRxCheck(transferRequest, pbm_id) {
     memberPhoneNumber: transferRequest.memberPhoneNumber,
     status: 'new',
   });
-
-  console.log(existingTransferRequests);
-
+  
   let existingTransferRequest = {};
 
   if (existingTransferRequests.length === 1) {

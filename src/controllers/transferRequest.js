@@ -28,16 +28,6 @@ exports.promptMember = async (req, res) => {
   }
 };
 
-exports.employeeClaimTR = async (req, res) => {
-  try {
-    const employee_id = await employeeAuth(req.header(authorization));
-    await transferRequest.employeeClaimTransferRequest(req.params.id, employee_id);
-    res.status(200).json({ message: 'successfully claimed' });
-  } catch (e) {
-    handleError(res, e, 'employee claim transfer request error');
-  }
-};
-
 exports.initiate = async (req, res) => {
   try {
     const message = req.body.Body.toLowerCase();
@@ -51,6 +41,37 @@ exports.initiate = async (req, res) => {
     res.status(200).json({ message: 'recieved' });
   } catch (e) {
     handleError(res, e, 'initiateTransfer');
+  }
+};
+
+exports.getOpenTransferRequests = async (req, res) => {
+  try {
+    await employeeAuth(req.header(authorization));
+    const transferRequests = await transferRequest.getOpenTransferRequests();
+    res.status(200).json({ transferRequests });
+  } catch(e) {
+    handleError(res, e, 'getOpenTransferRequests');
+  }
+};
+
+exports.getMyTransferRequests = async (req, res) => {
+  try {
+    const employeeId = await employeeAuth(req.header(authorization));
+    const myTransferRequests =
+      await transferRequest.getMyTransferRequests(employeeId);
+    res.status(200).json({ myTransferRequests });
+  } catch(e) {
+    handleError(res, e, 'getMyTransferRequests');
+  }
+};
+
+exports.employeeClaimTR = async (req, res) => {
+  try {
+    const employee_id = await employeeAuth(req.header(authorization));
+    await transferRequest.employeeClaimTransferRequest(req.params.id, employee_id);
+    res.status(200).json({ message: 'successfully claimed' });
+  } catch (e) {
+    handleError(res, e, 'employee claim transfer request error');
   }
 };
 

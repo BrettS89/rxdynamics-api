@@ -6,6 +6,8 @@ router.post('/promptmember', transferRequest.promptMember);
 router.post('/claim', transferRequest.employeeClaimTR);
 router.post('/initiate', transferRequest.initiate);
 router.post('/complete', transferRequest.completed);
+router.get('/openrequests', transferRequest.getOpenTransferRequests);
+router.get('/myrequests', transferRequest.getMyTransferRequests);
 
 router.post('/addpharmacy', transferRequest.addPharmacy);
 
