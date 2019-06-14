@@ -29,7 +29,7 @@ exports.login = async data => {
     throw new Error('Invalid password');
 
   const userId = { _id: employee._id };
-  const token = jwt.sign({ user: userId }, keys.secret);
+  const token = jwt.sign({ user: userId }, keys.secret, 50000);
   return token;
 };
 
