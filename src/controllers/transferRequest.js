@@ -46,9 +46,9 @@ exports.initiate = async (req, res) => {
 
 exports.getOpenTransferRequests = async (req, res) => {
   try {
-    await employeeAuth(req.header(authorization));
-    const transferRequests = await transferRequest.getOpenTransferRequests();
-    res.status(200).json({ transferRequests });
+    await employeeAuth(req.header('authorization'));
+    const openTransferRequests = await transferRequest.getOpenTransferRequests();
+    res.status(200).json({ openTransferRequests });
   } catch(e) {
     handleError(res, e, 'getOpenTransferRequests');
   }
@@ -56,7 +56,7 @@ exports.getOpenTransferRequests = async (req, res) => {
 
 exports.getMyTransferRequests = async (req, res) => {
   try {
-    const employeeId = await employeeAuth(req.header(authorization));
+    const employeeId = await employeeAuth(req.header('authorization'));
     const myTransferRequests =
       await transferRequest.getMyTransferRequests(employeeId);
     res.status(200).json({ myTransferRequests });
@@ -67,7 +67,7 @@ exports.getMyTransferRequests = async (req, res) => {
 
 exports.employeeClaimTR = async (req, res) => {
   try {
-    const employee_id = await employeeAuth(req.header(authorization));
+    const employee_id = await employeeAuth(req.header('authorization'));
     await transferRequest.employeeClaimTransferRequest(req.params.id, employee_id);
     res.status(200).json({ message: 'successfully claimed' });
   } catch (e) {
@@ -77,7 +77,7 @@ exports.employeeClaimTR = async (req, res) => {
 
 exports.completed = async (req, res) => {
   try {
-    await employeeAuth(req.header(authorization));
+    await employeeAuth(req.header('authorization'));
     const tRequest = 
       await transferRequest.setTransferRequestComplete(req.params.id);
     await transferRequest.sendCompletedSMS(tRequest);
