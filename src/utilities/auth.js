@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const Employee = require('../models/Employee');
 const PBM = require('../models/PBM');
 
