@@ -136,8 +136,8 @@ exports.setTransferRequestComplete = async (_id, employee) => {
 
 exports.sendCompletedSMS = async transferRequest => {
   console.log(transferRequest);
-  const pharmacyName = transferRequest.pharmacy.name;
-  const pharmacyAddress = transferRequest.pharmacy.address;
+  const pharmacyName = transferRequest.transferToPharmacy.name;
+  const pharmacyAddress = transferRequest.transferToPharmacy.address;
   const memberPhoneNumber = transferRequest.memberPhoneNumber;
   const message = `Your transfer is complete and your prescription(s) are ready for pick up at ${pharmacyName} ${pharmacyAddress}`;
   await sendSMS(memberPhoneNumber, message);
