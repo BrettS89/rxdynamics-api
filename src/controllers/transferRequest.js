@@ -79,13 +79,28 @@ exports.employeeClaimTR = async (req, res) => {
   }
 };
 
+exports.cancel = async (req, res) => {
+  try {
+    const employeeId = await employeeAuth(req.header('authorization'));
+    await transferRequest.cancelTransferRequest(req.params.id);
+    const openTransferRequests = await transferRequest.getOpenTransferRequests();
+    const myTransferRequests =
+      await transferRequest.getMyTransferRequests(employeeId);
+    
+    res.status(200).json({ openTransferRequests, myTransferRequests });
+    res.status(200).json({ message: 'transfer request cancelled' });
+  } catch(e) {
+    handleError(res, e, 'transferCancelled');
+  }
+};
+
 exports.completed = async (req, res) => {
   try {
     await employeeAuth(req.header('authorization'));
     const tRequest = 
       await transferRequest.setTransferRequestComplete(req.params.id);
     await transferRequest.sendCompletedSMS(tRequest);
-    res.status(200).json({ message: 'success' });
+    res.status(200).json({ message: 'transfer request completed' });
   } catch (e) {
     handleError(res, e, 'transferCompleted');
   }

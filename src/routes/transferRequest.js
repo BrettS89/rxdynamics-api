@@ -5,6 +5,7 @@ router.get('/nearbypharmacies/:npi', transferRequest.getNearbyPharmacies);
 router.post('/promptmember', transferRequest.promptMember);
 router.post('/claim', transferRequest.employeeClaimTR);
 router.post('/initiate', transferRequest.initiate);
+router.post('/cancel', transferRequest.cancel);
 router.post('/complete', transferRequest.completed);
 router.get('/openrequests', transferRequest.getOpenTransferRequests);
 router.get('/myrequests', transferRequest.getMyTransferRequests);

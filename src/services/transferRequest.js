@@ -113,6 +113,16 @@ exports.employeeClaimTransferRequest = async (id, employee_id) => {
   await transferRequest.save();
 };
 
+exports.cancelTransferRequest = async (_id, employee) => {
+  let transferRequest = await TransferRequest.findOne({ _id, employee });
+  if (!transferRequest) throw new Error({
+    status: 404,
+    message: 'transfer request not found'
+  });
+  transferRequest.status = 'cancelled';
+  await transferRequest.save();
+};
+
 exports.setTransferRequestComplete = async id => {
   let transferRequest = await TransferRequest.findById(id)
     .populate('transferToPharmacy', ['_id', 'name', 'address'])
