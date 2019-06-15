@@ -135,6 +135,7 @@ exports.setTransferRequestComplete = async (_id, employee) => {
 };
 
 exports.sendCompletedSMS = async transferRequest => {
+  console.log(transferRequest);
   const pharmacyName = transferRequest.pharmacy.name;
   const pharmacyAddress = transferRequest.pharmacy.address;
   const memberPhoneNumber = transferRequest.memberPhoneNumber;
