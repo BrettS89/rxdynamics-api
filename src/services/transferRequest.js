@@ -93,6 +93,12 @@ exports.getOpenTransferRequests = async () => {
 exports.getMyTransferRequests = async id => {
   const transferRequests = await TransferRequest
     .find({ status: 'claimed', employee: id })
+    .populate('transferToPharmacy', ['_id', 'name', 'address', 'npi', 'phoneNumber'])
+    .populate('transferFromPharmacy', ['_id', 'name', 'address', 'npi', 'phoneNumber'])
+    .sort({ date: 1 })
+    .limit(25)
+    .lean()
+    .exec();
   
   return transferRequests;
 };
