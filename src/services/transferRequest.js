@@ -144,7 +144,7 @@ exports.sendCompletedSMS = async transferRequest => {
 };
 
 exports.sendCanceledSMS = async transferRequest => {
-  const message = `We apologize, we couldn\'t transfer your prescription at this time. You can pick up your prescription at the original pharmacy it was sent.`;
+  const message = `We apologize, we couldn\'t transfer your prescription at this time. You can pick up your prescription at the original pharmacy it was prescribed.`;
   await sendSMS(transferRequest.memberPhoneNumber, message);
 }
 
