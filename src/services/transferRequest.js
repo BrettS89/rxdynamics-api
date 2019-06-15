@@ -120,7 +120,8 @@ exports.cancelTransferRequest = async (_id, employee) => {
     message: 'transfer request not found'
   });
   transferRequest.status = 'cancelled';
-  await transferRequest.save();
+  const cancelledTransferRequest = await transferRequest.save();
+  return cancelledTransferRequest;
 };
 
 exports.setTransferRequestComplete = async (_id, employee) => {
@@ -135,13 +136,17 @@ exports.setTransferRequestComplete = async (_id, employee) => {
 };
 
 exports.sendCompletedSMS = async transferRequest => {
-  console.log(transferRequest);
   const pharmacyName = transferRequest.transferToPharmacy.name;
   const pharmacyAddress = transferRequest.transferToPharmacy.address;
   const memberPhoneNumber = transferRequest.memberPhoneNumber;
   const message = `Your transfer is complete and your prescription(s) are ready for pick up at ${pharmacyName} ${pharmacyAddress}`;
   await sendSMS(memberPhoneNumber, message);
 };
+
+exports.sendCanceledSMS = async transferRequest => {
+  const message = `We apologize, we couldn\'t transfer your prescription at this time. You can pick up your prescription at the original pharmacy it was sent.`;
+  await sendSMS(memberPhoneNumber, message);
+}
 
 // Helper functions
 

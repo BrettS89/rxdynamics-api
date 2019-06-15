@@ -82,10 +82,13 @@ exports.employeeClaimTR = async (req, res) => {
 exports.cancel = async (req, res) => {
   try {
     const employeeId = await employeeAuth(req.header('authorization'));
-    await transferRequest.cancelTransferRequest(req.body.id, employeeId);
+    const cancelledTransferRequest = 
+      await transferRequest.cancelTransferRequest(req.body.id, employeeId);
     const openTransferRequests = await transferRequest.getOpenTransferRequests();
     const myTransferRequests =
       await transferRequest.getMyTransferRequests(employeeId);
+
+    await transferRequest.sendCanceledSMS(cancelledTransferRequest);
     
     res.status(200).json({ openTransferRequests, myTransferRequests });
   } catch(e) {
