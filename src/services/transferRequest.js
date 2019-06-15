@@ -145,7 +145,7 @@ exports.sendCompletedSMS = async transferRequest => {
 
 exports.sendCanceledSMS = async transferRequest => {
   const message = `We apologize, we couldn\'t transfer your prescription at this time. You can pick up your prescription at the original pharmacy it was sent.`;
-  await sendSMS(memberPhoneNumber, message);
+  await sendSMS(transferRequest.memberPhoneNumber, message);
 }
 
 // Helper functions
