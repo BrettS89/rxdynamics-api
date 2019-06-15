@@ -67,9 +67,13 @@ exports.getMyTransferRequests = async (req, res) => {
 
 exports.employeeClaimTR = async (req, res) => {
   try {
-    const employee_id = await employeeAuth(req.header('authorization'));
-    await transferRequest.employeeClaimTransferRequest(req.params.id, employee_id);
-    res.status(200).json({ message: 'successfully claimed' });
+    const employeeId = await employeeAuth(req.header('authorization'));
+    await transferRequest.employeeClaimTransferRequest(req.body.id, employeeId);
+    const openTransferRequests = await transferRequest.getOpenTransferRequests();
+    const myTransferRequests =
+      await transferRequest.getMyTransferRequests(employeeId);
+    
+    res.status(200).json({ openTransferRequests, myTransferRequests });
   } catch (e) {
     handleError(res, e, 'employee claim transfer request error');
   }

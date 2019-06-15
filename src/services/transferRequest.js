@@ -134,7 +134,7 @@ async function duplicateRxCheck(transferRequest, pbm_id) {
     memberPhoneNumber: transferRequest.memberPhoneNumber,
     status: 'new',
   });
-  
+
   let existingTransferRequest = {};
 
   if (existingTransferRequests.length === 1) {
