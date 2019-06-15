@@ -82,7 +82,7 @@ exports.employeeClaimTR = async (req, res) => {
 exports.cancel = async (req, res) => {
   try {
     const employeeId = await employeeAuth(req.header('authorization'));
-    await transferRequest.cancelTransferRequest(req.params.id);
+    await transferRequest.cancelTransferRequest(req.body.id);
     const openTransferRequests = await transferRequest.getOpenTransferRequests();
     const myTransferRequests =
       await transferRequest.getMyTransferRequests(employeeId);
