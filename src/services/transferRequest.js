@@ -123,8 +123,8 @@ exports.cancelTransferRequest = async (_id, employee) => {
   await transferRequest.save();
 };
 
-exports.setTransferRequestComplete = async id => {
-  let transferRequest = await TransferRequest.findById(id)
+exports.setTransferRequestComplete = async (_id, employee) => {
+  let transferRequest = await TransferRequest.findOne({ _id, employee })
     .populate('transferToPharmacy', ['_id', 'name', 'address'])
     .exec();
 

@@ -88,7 +88,6 @@ exports.cancel = async (req, res) => {
       await transferRequest.getMyTransferRequests(employeeId);
     
     res.status(200).json({ openTransferRequests, myTransferRequests });
-    res.status(200).json({ message: 'transfer request cancelled' });
   } catch(e) {
     handleError(res, e, 'transferCancelled');
   }
@@ -96,11 +95,16 @@ exports.cancel = async (req, res) => {
 
 exports.completed = async (req, res) => {
   try {
-    await employeeAuth(req.header('authorization'));
+    const employeeId = await employeeAuth(req.header('authorization'));
     const tRequest = 
-      await transferRequest.setTransferRequestComplete(req.params.id);
+      await transferRequest.setTransferRequestComplete(req.body.id, employeeId);
     await transferRequest.sendCompletedSMS(tRequest);
-    res.status(200).json({ message: 'transfer request completed' });
+
+    const openTransferRequests = await transferRequest.getOpenTransferRequests();
+    const myTransferRequests =
+      await transferRequest.getMyTransferRequests(employeeId);
+    
+    res.status(200).json({ openTransferRequests, myTransferRequests });
   } catch (e) {
     handleError(res, e, 'transferCompleted');
   }
