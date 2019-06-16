@@ -1,3 +1,4 @@
+const io = require('../../index');
 const Pharmacy = require('../models/Pharmacy');
 const { pbmAuth, employeeAuth } = require('../utilities/auth');
 const { handleError } = require('../utilities/errorHandling');
@@ -39,6 +40,8 @@ exports.initiate = async (req, res) => {
       await transferRequest.sendBadTextResponse(req.body.From);
     }
     res.status(200).json({ message: 'recieved' });
+    const openTransferRequests = await transferRequest.getOpenTransferRequests();
+    io.io.sockets.emit('openTransferRequests', openTransferRequests);
   } catch (e) {
     handleError(res, e, 'initiateTransfer');
   }
