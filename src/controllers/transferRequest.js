@@ -76,7 +76,8 @@ exports.employeeClaimTR = async (req, res) => {
     const myTransferRequests =
       await transferRequest.getMyTransferRequests(employeeId);
     
-    res.status(200).json({ openTransferRequests, myTransferRequests });
+    res.status(200).json({ myTransferRequests });
+    io.io.sockets.emit('openTransferRequests', openTransferRequests);
   } catch (e) {
     handleError(res, e, 'employee claim transfer request error');
   }
@@ -93,7 +94,8 @@ exports.cancel = async (req, res) => {
 
     await transferRequest.sendCanceledSMS(cancelledTransferRequest);
     
-    res.status(200).json({ openTransferRequests, myTransferRequests });
+    res.status(200).json({ myTransferRequests });
+    io.io.sockets.emit('openTransferRequests', openTransferRequests);
   } catch(e) {
     handleError(res, e, 'transferCancelled');
   }
@@ -110,7 +112,8 @@ exports.completed = async (req, res) => {
     const myTransferRequests =
       await transferRequest.getMyTransferRequests(employeeId);
     
-    res.status(200).json({ openTransferRequests, myTransferRequests });
+    res.status(200).json({ myTransferRequests });
+    io.io.sockets.emit('openTransferRequests', openTransferRequests);
   } catch (e) {
     handleError(res, e, 'transferCompleted');
   }
