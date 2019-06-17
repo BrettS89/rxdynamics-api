@@ -7,5 +7,6 @@ exports.listenForConnection = () => {
 
   io.io.on('disconnect', (socket) => {
     socket.disconnect();
+    console.log('a socket was disconnected');
   });
 };
