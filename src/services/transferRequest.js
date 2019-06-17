@@ -63,7 +63,11 @@ exports.initiate = async memberPhoneNumber => {
     status: 'new',
   });
 
-  if (!transferRequests) throw new Error('Could not find any Rx\'s');
+  if (!transferRequests) {
+    throw new Error('Could not find any Rx\'s');
+    const message = `We apologize, we can't transfer your prescription at this time`;
+    await sendSMS(transferRequest.memberPhoneNumber, message);
+  } 
 
   await Promise.all(transferRequests.map(async t => {
     const transferRecord = t;
@@ -158,6 +162,12 @@ async function duplicateRxCheck(transferRequest, pbm_id) {
   });
 
   let existingTransferRequest = {};
+
+  if (existingTransferRequests.length === 1 && existingTransferRequests[0].transferFromPharmacy.toString() !== transferRequest.transferFromPharmacy) {
+    existingTransferRequest = existingTransferRequests[0];
+    existingTransferRequest.status = 'cancelled';
+    existingTransferRequest.save();
+  }
 
   if (existingTransferRequests.length === 1) {
     existingTransferRequest = existingTransferRequests[0];
