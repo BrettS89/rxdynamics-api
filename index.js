@@ -5,6 +5,7 @@ const socket = require('socket.io');
 const cors = require('cors');
 const keys = require('./src/config');
 
+const pbmRoutes = require('./src/routes/pbm');
 const transferRoutes = require('./src/routes/transferRequest');
 const employeeRoutes = require('./src/routes/employee');
 const appRoutes = require('./src/routes/app');
@@ -18,6 +19,7 @@ mongoose.connect(keys.mongoURI, { useNewUrlParser: true });
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use('/pbm', pbmRoutes);
 app.use('/transferrequest', transferRoutes);
 app.use('/employee', employeeRoutes);
 app.use('/', appRoutes);

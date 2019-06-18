@@ -29,15 +29,19 @@ exports.findNearbyPharmacies = async npi => {
 exports.createTransferRequest = async (data, pbm) => {
   if (!await duplicateRxCheck(data, pbm)) return false;
 
-  const transferFromPharmacy = await Pharmacy.findOne({ npi: data.transferFromPharmacy });
-  const transferToPharmacy = await Pharmacy.findOne({ npi: data.transferToPharmacy });
+  const transferFromPharmacy =
+    await Pharmacy.findOne({ npi: data.transferFromPharmacy });
+
+  const transferToPharmacy =
+    await Pharmacy.findOne({ npi: data.transferToPharmacy });
 
   const transferRequest = new TransferRequest({
     dateCreated: Date.now(),
     pbm,
     transferFromPharmacy,
     transferToPharmacy,
-    drugs: [data.drug],
+    drugs: [data.prescription],
+    memberId: data.memberId,
     memberPhoneNumber: data.memberPhoneNumber,
     planSponsor: data.planSponsor,
     status: 'new',
@@ -121,7 +125,7 @@ exports.cancelTransferRequest = async (_id, employee) => {
   let transferRequest = await TransferRequest.findOne({ _id, employee });
   if (!transferRequest) throw new Error({
     status: 404,
-    message: 'transfer request not found'
+    message: 'transfer request not found',
   });
   transferRequest.status = 'cancelled';
   const cancelledTransferRequest = await transferRequest.save();
@@ -163,7 +167,10 @@ async function duplicateRxCheck(transferRequest, pbm_id) {
 
   let existingTransferRequest = {};
 
-  if (existingTransferRequests.length === 1 && existingTransferRequests[0].transferFromPharmacy.toString() !== transferRequest.transferFromPharmacy) {
+  if (existingTransferRequests.length === 1 
+      && existingTransferRequests[0].transferFromPharmacy.toString() 
+        !== transferRequest.transferFromPharmacy
+      ) {
     existingTransferRequest = existingTransferRequests[0];
     existingTransferRequest.status = 'cancelled';
     existingTransferRequest.save();
@@ -173,7 +180,7 @@ async function duplicateRxCheck(transferRequest, pbm_id) {
     existingTransferRequest = existingTransferRequests[0];
 
     if (pbm.transferMultipleRx) {
-      existingTransferRequest.drugs.push(transferRequest.drug);
+      existingTransferRequest.drugs.push(transferRequest.prescription);
     } else {
       existingTransferRequest.status = 'cancelled';
     }

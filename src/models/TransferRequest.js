@@ -8,7 +8,8 @@ const transferRequestSchema = new mongoose.Schema({
   transferToPharmacy: { type: mongoose.Schema.Types.ObjectId, ref: 'Pharmacy', required: true, },
   drugs: { type: [], required: true },
   employee: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee', default: null },
-  memberPhoneNumber: { type: String, required: true, },
+  memberId: { type: String, },
+  memberPhoneNumber: { type: String, },
   status: { type: String, required: true, },
 });
 

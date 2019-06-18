@@ -6,7 +6,6 @@ const transferRequest = require('../services/transferRequest');
 
 exports.getNearbyPharmacies = async (req, res) => {
   try {
-    console.log('in');
     await pbmAuth(req.header('authorization'));
     const nearByPharmacies =
       await transferRequest.findNearbyPharmacies(req.params.npi);
@@ -32,7 +31,6 @@ exports.promptMember = async (req, res) => {
 exports.initiate = async (req, res) => {
   try {
     const message = req.body.Body.toLowerCase();
-
     if (message === 'yes') {
       await transferRequest.initiate(req.body.From);
       await transferRequest.sendInitiatedSMS(req.body.From);
