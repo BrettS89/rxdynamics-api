@@ -17,7 +17,7 @@ exports.findNearbyPharmacies = async npi => {
           $geometry: {
             type: 'Point',
             coordinates: [
-              p.lat, p.lon,
+              p.lon, p.lat,
             ],
           },
           $maxDistance: searchRadius,
