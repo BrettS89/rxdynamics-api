@@ -32,7 +32,7 @@ exports.findNearbyPharmacies = async npi => {
       console.log({ [searchRadius.toString()]: pharmacies.length });
     } else {
       searchRadius += 300;
-      console.log({ [searchRadius.toString()]: pharmacies.length });
+      console.log({ [searchRadius.toString()]: nearbyPharmacies.length });
     }
   }
   
