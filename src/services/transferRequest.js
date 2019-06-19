@@ -18,7 +18,7 @@ exports.findNearbyPharmacies = async npi => {
             type: 'Point',
             coordinates: [
               p.lat, p.lon,
-            ]
+            ],
           },
           $maxDistance: searchRadius,
         }
@@ -28,8 +28,11 @@ exports.findNearbyPharmacies = async npi => {
     if (nearbyPharmacies.length >= 5) {
       pharmacies = nearbyPharmacies;
       minimumPharmaciesFound = true;
+      console.log('finished');
+      console.log({ [searchRadius.toString()]: pharmacies.length });
     } else {
       searchRadius += 300;
+      console.log({ [searchRadius.toString()]: pharmacies.length });
     }
   }
   
