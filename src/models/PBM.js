@@ -6,6 +6,7 @@ const pbmSchema = new mongoose.Schema({
   uri: { type: String, },
   getMemberPhoneNumberRoute: { type: String, },
   transferMultipleRx: { type: Boolean, required: true },
+  rxDetailsRoute: { type: String },
 });
 
 module.exports = mongoose.model('PBM', pbmSchema);

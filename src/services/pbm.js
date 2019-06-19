@@ -1,15 +1,18 @@
 const axios = require('axios');
-const keys = require('../config');
 const PBM = require('../models/PBM');
+const utils = require('../utilities/misc');
 
 exports.getRxDetails = async (tr) => {
-  // Need name, DOB, phone number, drug names, drug strengths
-
-  // get correct api key of pbm
-  // find pbm in DB
+  // Need name, DOB, phone number, address, drug names, drug strengths
   const foundPbm = await PBM.findById(tr.pbm);
-  // get pbm api uri and api route for getting member details
+  const apikey = utils.getPbmApiKey(foundPbm.companyName);
+  const rxDetailsRoute = foundPbm.rxDetailsRoute;
   // hit pbm api and get member details
+  const body = {
+    memberId: tr.memberId,
+    claims: tr.drugs,
+  };
+
   return {
     firstName: 'Brett',
     lastName: 'Sodie',

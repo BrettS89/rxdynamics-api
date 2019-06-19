@@ -6,24 +6,34 @@ const { sendSMS } = require('./twilio');
 exports.findNearbyPharmacies = async npi => {
   const p = await Pharmacy.findOne({ npi });
   if (!p) throw new Error({ message: 'pharmacy not found', status: 404 });
+  let searchRadius = 300;
+  let minimumPharmaciesFound = false;
+  let pharmacies = [];
 
-  const nearbyPharmacies = await Pharmacy.find({
-    location: {
-      $nearSphere: {
-        $geometry: {
-          type: 'Point',
-          coordinates: [
-            p.lat, p.lon,
-          ]
-        },
-        $maxDistance: 8000
+  while (!minimumPharmaciesFound) {
+    let nearbyPharmacies = await Pharmacy.find({
+      location: {
+        $nearSphere: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [
+              p.lat, p.lon,
+            ]
+          },
+          $maxDistance: searchRadius,
+        }
       }
+    });
+
+    if (nearbyPharmacies.length >= 5) {
+      pharmacies = nearbyPharmacies;
+      minimumPharmaciesFound = true;
+    } else {
+      searchRadius += 300;
     }
-  });
-
-  nearbyPharmacyNpis = nearbyPharmacies.map(p => p.npi);
-
-  return nearbyPharmacyNpis;
+  }
+  
+  return pharmacies.map(p => p.npi);
 };
 
 exports.createTransferRequest = async (data, pbm) => {
