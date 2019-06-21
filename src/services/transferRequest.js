@@ -81,7 +81,7 @@ exports.initiate = async memberPhoneNumber => {
   });
 
   if (!transferRequests) {
-    throw new Error('Could not find any Rx\'s');
+    throw new Error({ message: 'Could not find any Rx\'s', status: 404 });
     const message = `We apologize, we can't transfer your prescription at this time`;
     await sendSMS(transferRequest.memberPhoneNumber, message);
   } 
@@ -126,7 +126,7 @@ exports.getMyTransferRequests = async id => {
 
 exports.employeeClaimTransferRequest = async (id, employee_id) => {
   let transferRequest = await TransferRequest.findById(id);
-  if (!transferRequest) throw new Error('Could not find transfer request');
+  if (!transferRequest) throw new Error({ message: 'Could not find transfer request', status: 404 });
   if (transferRequest.employee)
     throw new Error({ message: 'already claimed', status: 401 });
   transferRequest.employee = employee_id;

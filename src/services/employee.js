@@ -6,7 +6,7 @@ const Employee = require('../models/Employee');
 exports.createAccount = async data => {
   const existingEmployee = await Employee.findOne({ email: data.email });
   if (existingEmployee) 
-    throw new Error('Email already exists for an employee');
+    throw new Error({ message: 'Email already exists for an employee', status: 400 });
 
   const employee = new Employee({
     ...data,
@@ -23,10 +23,10 @@ exports.createAccount = async data => {
 
 exports.login = async data => {
   const employee = await Employee.findOne({ email: data.email });
-  if (!employee) throw new Error('No employee with this email exists');
+  if (!employee) throw new Error({ message: 'no employee with this email exists', status: 404 });
 
   if (!bcrypt.compareSync(data.password, employee.password))
-    throw new Error('Invalid password');
+    throw new Error({ message: 'invalid password', status: 401 });
 
   const userId = { _id: employee._id };
   const token = jwt.sign({ user: userId }, keys.secret);
@@ -35,10 +35,10 @@ exports.login = async data => {
 
 exports.changePasswordByAdmin = async data => {
   if (!data.password || !data.id) 
-    throw new Error('please provide an id and password');
+    throw new Error({ message: 'please provide an id and password', status: 400 });
 
   let employee = await Employee.findById(data.id);
-  if (!employee) throw new Error('could not find employee with this id');
+  if (!employee) throw new Error({ message: 'could not find employee with this id', status: 404 });
 
   employee.password = bcrypt.hashSync(data.password, 10);
 
@@ -48,10 +48,10 @@ exports.changePasswordByAdmin = async data => {
 
 exports.changePasswordByEmployee = async (id, data) => {
   if (!data.password || !data.id) 
-    throw new Error('please provide an id and password');
+    throw new Error({ message: 'please provide an id and password', status: 400 });
 
   let employee = await Employee.findById(id);
-  if (!employee) throw new Error('could not find employee with this id');
+  if (!employee) throw new Error({ message: 'could not find employee with this id', status: 404 });
 
   employee.password = bcrypt.hashSync(data.password, 10);
 
@@ -61,7 +61,7 @@ exports.changePasswordByEmployee = async (id, data) => {
 
 exports.setInactive = async id => {
   let employee = await Employee.findById(id);
-  if (!employee) throw new Error('Could not find employee with this ID');
+  if (!employee) throw new Error({ message: 'could not find employee with this id', status: 404 });
 
   employee.active = false;
 
@@ -72,7 +72,7 @@ exports.setInactive = async id => {
 
 exports.setActive = async id => {
   let employee = await Employee.findById(id);
-  if (!employee) throw new Error('Could not find employee with this ID');
+  if (!employee) throw new Error({ message: 'could not find employee with this id', status: 404 });
 
   employee.active = true;
 
@@ -83,7 +83,7 @@ exports.setActive = async id => {
 
 exports.makeAdmin = async id => {
   let employee = await Employee.findById(id);
-  if (!employee) throw new Error('Could not find employee with this ID');
+  if (!employee) throw new Error({ message: 'could not find employee with this id', status: 404 });
 
   employee.isAdmin = true;
 
@@ -94,7 +94,7 @@ exports.makeAdmin = async id => {
 
 exports.removeAdmin = async id => {
   let employee = await Employee.findById(id);
-  if (!employee) throw new Error('Could not find employee with this ID');
+  if (!employee) throw new Error({ message: 'could not find employee with this id', status: 404 });
 
   employee.isAdmin = false;
 
