@@ -33,7 +33,10 @@ exports.initiate = async (req, res) => {
     const message = req.body.Body.toLowerCase();
     if (message === 'yes') {
       const status = await transferRequest.initiate(req.body.From);
-      if (!status) transferRequest.sendExpiredSMS(req.body.From);
+      if (!status) {
+        transferRequest.sendExpiredSMS(req.body.From);
+        return res.status(200).json({ message: 'recieved' });
+      }
       await transferRequest.sendInitiatedSMS(req.body.From);
     } else {
       await transferRequest.sendBadTextResponse(req.body.From);
