@@ -93,7 +93,6 @@ exports.initiate = async memberPhoneNumber => {
     return false;
   }
     
-
   transferRequests = transferRequests.filter(t => Date.now() - t.dateCreated < keys.expire);
 
   if (!transferRequests) {
@@ -107,6 +106,7 @@ exports.initiate = async memberPhoneNumber => {
     transferRecord.status = 'initiate';
     await transferRecord.save();
   }));
+  return true;
 };
 
 exports.sendInitiatedSMS = async memberPhoneNumber => {
