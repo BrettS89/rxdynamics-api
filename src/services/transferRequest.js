@@ -87,7 +87,7 @@ exports.initiate = async memberPhoneNumber => {
     throw { message: 'Could not find any Rx\'s', status: 404 };
   }
 
-  if (transferRequests.length === 1 && Date.now() - transferRequests[0].dateCreated > keys.expire)
+  if (transferRequests.length === 1 && Date.now() - transferRequests[0].dateCreated < keys.expire)
     return false;
 
   transferRequests = transferRequests.filter(t => Date.now() - t.dateCreated < keys.expire);
