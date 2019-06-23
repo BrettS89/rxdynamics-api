@@ -1,3 +1,4 @@
+const keys = require('../config');
 const Pharmacy = require('../models/Pharmacy');
 const TransferRequest = require('../models/TransferRequest');
 const PBM = require('../models/PBM');
@@ -5,7 +6,7 @@ const { sendSMS } = require('./twilio');
 
 exports.findNearbyPharmacies = async npi => {
   const p = await Pharmacy.findOne({ npi });
-  if (!p) throw { message: 'pharmacy not found', status: 404 };
+  if (!p) throw new Error({ message: 'pharmacy not found', status: 404 });
   let searchRadius = 300;
   let minimumPharmaciesFound = false;
   let pharmacies = [];
@@ -81,10 +82,22 @@ exports.initiate = async memberPhoneNumber => {
   });
 
   if (!transferRequests) {
-    throw { message: 'Could not find any Rx\'s', status: 404 };
     const message = `We apologize, we can't transfer your prescription at this time`;
     await sendSMS(transferRequest.memberPhoneNumber, message);
-  } 
+    throw { message: 'Could not find any Rx\'s', status: 404 };
+  }
+
+  if (transferRequests.length === 1 && Date.now() - transferRequests[1].dateCreated > keys.expire) {
+    return false;
+  }
+
+  transferRequests = transferRequests.filter(t => Date.now() - t.dateCreated > keys.expire);
+
+  if (!transferRequests) {
+    const message = `We apologize, we can't transfer your prescription at this time`;
+    await sendSMS(transferRequest.memberPhoneNumber, message);
+    throw { message: 'Could not find any Rx\'s', status: 404 };
+  }
 
   await Promise.all(transferRequests.map(async t => {
     const transferRecord = t;
@@ -120,15 +133,17 @@ exports.getMyTransferRequests = async id => {
     .limit(25)
     .lean()
     .exec();
+
+    console.log(transferRequests);
   
   return transferRequests;
 };
 
 exports.employeeClaimTransferRequest = async (id, employee_id) => {
   let transferRequest = await TransferRequest.findById(id);
-  if (!transferRequest) throw { message: 'Could not find transfer request', status: 404 };
+  if (!transferRequest) throw new Error({ message: 'Could not find transfer request', status: 404 });
   if (transferRequest.employee)
-    throw { message: 'already claimed', status: 401 };
+    throw new Error({ message: 'already claimed', status: 401 });
   transferRequest.employee = employee_id;
   transferRequest.status = 'claimed';
   await transferRequest.save();
@@ -136,10 +151,10 @@ exports.employeeClaimTransferRequest = async (id, employee_id) => {
 
 exports.cancelTransferRequest = async (_id, employee) => {
   let transferRequest = await TransferRequest.findOne({ _id, employee });
-  if (!transferRequest) throw {
+  if (!transferRequest) throw new Error({
     status: 404,
     message: 'transfer request not found',
-  };
+  });
   transferRequest.status = 'cancelled';
   const cancelledTransferRequest = await transferRequest.save();
   return cancelledTransferRequest;
@@ -167,7 +182,12 @@ exports.sendCompletedSMS = async transferRequest => {
 exports.sendCanceledSMS = async transferRequest => {
   const message = `We apologize, we couldn\'t transfer your prescription at this time. You can pick up your prescription at the original pharmacy it was prescribed.`;
   await sendSMS(transferRequest.memberPhoneNumber, message);
-}
+};
+
+exports.sendExpiredSMS = async phoneNumber => {
+  const message = `We're sorry you're transfer offer has expired, we'll inform you of any future Rx savings.`;
+  await sendSMS(phoneNumber, message);
+};
 
 // Helper functions
 
@@ -176,6 +196,7 @@ async function duplicateRxCheck(transferRequest, pbm_id) {
   const existingTransferRequests = await TransferRequest.find({
     memberPhoneNumber: transferRequest.memberPhoneNumber,
     status: 'new',
+    dateCreated: { $lt: Date.now() - keys.expire },
   });
 
   let existingTransferRequest = {};
@@ -208,7 +229,7 @@ async function duplicateRxCheck(transferRequest, pbm_id) {
       tReq.status = 'cancelled';
       await tReq.save();
     }));
-    throw { message: 'More than 1 existing transfer requests', status: 500 };
+    throw new Error({ message: 'More than 1 existing transfer requests', status: 500 });
   }
   return true;
 }
