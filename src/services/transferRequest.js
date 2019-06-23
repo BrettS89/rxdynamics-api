@@ -88,8 +88,6 @@ exports.initiate = async memberPhoneNumber => {
   }
 
   if (transferRequests.length === 1 && Date.now() - transferRequests[0].dateCreated > keys.expire) {
-    console.log(Date.now() - transferRequests[0].dateCreated)
-    console.log(Date.now() - transferRequests[0].dateCreated > keys.expire);
     return false;
   }
     
