@@ -207,7 +207,7 @@ async function duplicateRxCheck(transferRequest, pbm_id) {
       ) {
     existingTransferRequest = existingTransferRequests[0];
     existingTransferRequest.status = 'cancelled';
-    existingTransferRequest.save();
+    await existingTransferRequest.save();
   }
 
   if (existingTransferRequests.length === 1) {
