@@ -81,6 +81,8 @@ exports.initiate = async memberPhoneNumber => {
     status: 'new',
   });
 
+  console.log(transferRequests);
+
   if (!transferRequests) {
     const message = `We apologize, we can't transfer your prescription at this time`;
     await sendSMS(transferRequest.memberPhoneNumber, message);
@@ -90,6 +92,7 @@ exports.initiate = async memberPhoneNumber => {
   if (transferRequests.length === 1 && Date.now() - transferRequests[1].dateCreated > keys.expire) {
     return false;
   }
+  console.log('inafter');
 
   transferRequests = transferRequests.filter(t => Date.now() - t.dateCreated > keys.expire);
 
