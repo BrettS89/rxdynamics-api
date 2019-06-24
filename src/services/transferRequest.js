@@ -190,7 +190,7 @@ exports.sendExpiredSMS = async phoneNumber => {
 
 exports.getTrHistory = async phoneNumber => {
   let transferRequests = [];
-  if (!phoneNumber) {
+  if (phoneNumber) {
     transferRequests = await TransferRequest.find({
         memberPhoneNumber: phoneNumber,
       })
