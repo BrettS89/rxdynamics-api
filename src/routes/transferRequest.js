@@ -9,6 +9,7 @@ router.post('/cancel', transferRequest.cancel);
 router.post('/complete', transferRequest.completed);
 router.get('/openrequests', transferRequest.getOpenTransferRequests);
 router.get('/myrequests', transferRequest.getMyTransferRequests);
+router.post('/trhistory', transferRequest.getTrHistory);
 
 router.post('/addpharmacy', transferRequest.addPharmacy);
 

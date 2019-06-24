@@ -121,6 +121,17 @@ exports.completed = async (req, res) => {
   }
 };
 
+exports.getTrHistory = async (req, res) => {
+  try {
+    await employeeAuth(req.header('authorization'));
+    const transferRequests =
+      await transferRequest.getTrHistory(req.body.phoneNumber);
+    res.status(200).json({ transferRequests });
+  } catch (e) {
+    handleError(res, e, 'getTrHistory');
+  }
+};
+
 // JUST FOR DEVELOPMENT
 
 exports.addPharmacy = async (req, res) => {

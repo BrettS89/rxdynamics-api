@@ -190,6 +190,26 @@ exports.sendExpiredSMS = async phoneNumber => {
   await sendSMS(phoneNumber, message);
 };
 
+exports.getTrHistory = async phoneNumber => {
+  let transferRequests = [];
+  if (!phoneNumber) {
+    transferRequests = await TransferRequest.find({
+        memberPhoneNumber: phoneNumber,
+      })
+      .sort({ dateCreated: 'desc' })
+      .limit(51)
+      .lean()
+      .exec();
+  } else {
+    transferRequests = await TransferRequest.find()
+      .sort({ dateCreated: 'desc' })
+      .limit(51)
+      .lean()
+      .exec();
+  }
+  return transferRequests;
+};
+
 // Helper functions
 
 async function duplicateRxCheck(transferRequest, pbm_id) {
