@@ -35,7 +35,7 @@ exports.initiate = async (req, res) => {
       const status = await transferRequest.initiate(req.body.From);
       if (!status) {
         transferRequest.sendExpiredSMS(req.body.From);
-        return res.status(200).json({ message: 'recieved' });
+        return res.status(200).json({ message: 'received' });
       }
       await transferRequest.sendInitiatedSMS(req.body.From);
     } else {
@@ -106,14 +106,14 @@ exports.cancel = async (req, res) => {
 exports.completed = async (req, res) => {
   try {
     const employeeId = await employeeAuth(req.header('authorization'));
-    const tRequest = 
+    const tRequest =
       await transferRequest.setTransferRequestComplete(req.body.id, employeeId);
     await transferRequest.sendCompletedSMS(tRequest);
 
     const openTransferRequests = await transferRequest.getOpenTransferRequests();
     const myTransferRequests =
       await transferRequest.getMyTransferRequests(employeeId);
-    
+
     res.status(200).json({ myTransferRequests });
     io.io.sockets.emit('openTransferRequests', openTransferRequests);
   } catch (e) {

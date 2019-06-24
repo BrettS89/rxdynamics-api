@@ -134,8 +134,6 @@ exports.getMyTransferRequests = async id => {
     .limit(25)
     .lean()
     .exec();
-
-    console.log(transferRequests);
   
   return transferRequests;
 };
