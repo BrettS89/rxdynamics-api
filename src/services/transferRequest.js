@@ -194,12 +194,16 @@ exports.getTrHistory = async phoneNumber => {
     transferRequests = await TransferRequest.find({
         memberPhoneNumber: phoneNumber,
       })
+      .populate('transferToPharmacy', ['_id', 'name', 'address', 'npi', 'phoneNumber'])
+      .populate('transferFromPharmacy', ['_id', 'name', 'address', 'npi', 'phoneNumber'])
       .sort({ dateCreated: 'desc' })
       .limit(51)
       .lean()
       .exec();
   } else {
     transferRequests = await TransferRequest.find()
+      .populate('transferToPharmacy', ['_id', 'name', 'address', 'npi', 'phoneNumber'])
+      .populate('transferFromPharmacy', ['_id', 'name', 'address', 'npi', 'phoneNumber'])
       .sort({ dateCreated: 'desc' })
       .limit(51)
       .lean()
