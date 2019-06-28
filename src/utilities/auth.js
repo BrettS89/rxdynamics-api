@@ -13,7 +13,6 @@ exports.employeeAuth = async receivedToken => {
     return decodedUser.user._id;
   }
   catch(e) {
-    console.log(e);
     throw { message: 'token error', status: 401 };
   }
 };

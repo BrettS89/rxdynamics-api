@@ -6,7 +6,7 @@ const { sendSMS } = require('./twilio');
 
 exports.findNearbyPharmacies = async npi => {
   const p = await Pharmacy.findOne({ npi });
-  if (!p) throw new Error({ message: 'pharmacy not found', status: 404 });
+  if (!p) throw new { message: 'pharmacy not found', status: 404 };
   let searchRadius = 300;
   let minimumPharmaciesFound = false;
   let pharmacies = [];
@@ -87,10 +87,9 @@ exports.initiate = async memberPhoneNumber => {
     throw { message: 'Could not find any Rx\'s', status: 404 };
   }
 
-  if (transferRequests.length === 1 && Date.now() - transferRequests[0].dateCreated > keys.expire) {
+  if (transferRequests.length === 1 && Date.now() - transferRequests[0].dateCreated > keys.expire)
     return false;
-  }
-    
+
   transferRequests = transferRequests.filter(t => Date.now() - t.dateCreated < keys.expire);
 
   if (!transferRequests) {
@@ -140,9 +139,9 @@ exports.getMyTransferRequests = async id => {
 
 exports.employeeClaimTransferRequest = async (id, employee_id) => {
   let transferRequest = await TransferRequest.findById(id);
-  if (!transferRequest) throw new Error({ message: 'Could not find transfer request', status: 404 });
+  if (!transferRequest) throw { message: 'Could not find transfer request', status: 404 };
   if (transferRequest.employee)
-    throw new Error({ message: 'already claimed', status: 401 });
+    throw { message: 'already claimed', status: 401 };
   transferRequest.employee = employee_id;
   transferRequest.status = 'claimed';
   await transferRequest.save();
@@ -150,10 +149,10 @@ exports.employeeClaimTransferRequest = async (id, employee_id) => {
 
 exports.cancelTransferRequest = async (_id, employee) => {
   let transferRequest = await TransferRequest.findOne({ _id, employee });
-  if (!transferRequest) throw new Error({
+  if (!transferRequest) throw {
     status: 404,
     message: 'transfer request not found',
-  });
+  };
   transferRequest.status = 'cancelled';
   const cancelledTransferRequest = await transferRequest.save();
   return cancelledTransferRequest;
@@ -252,7 +251,7 @@ async function duplicateRxCheck(transferRequest, pbm_id) {
       tReq.status = 'cancelled';
       await tReq.save();
     }));
-    throw new Error({ message: 'More than 1 existing transfer requests', status: 500 });
+    throw new { message: 'More than 1 existing transfer requests', status: 500 };
   }
   return true;
 }
