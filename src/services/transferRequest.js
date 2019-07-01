@@ -66,13 +66,16 @@ exports.createTransferRequest = async (data, pbm) => {
 
 exports.sendTransferRequestSMS = async data => {
   const pharmacy = await Pharmacy.findOne({ npi: data.transferToPharmacy });
+  if (!pharmacy) throw { message: 'could not find pharmacy', status: 404 };
   const message = `Greetings from ${data.planSponsor}. You can save money by transferring your prescription(s) to ${pharmacy.name} at ${pharmacy.address}. If you would like us to transfer your prescription reply with YES to this text message and we'll handle the rest.`;
   await sendSMS(data.memberPhoneNumber, message);
+  return true;
 };
 
 exports.sendBadTextResponse = async memberPhoneNumber => {
   const message = `Please respond with a yes if you would like us to transfer your prescription(s).`;
   await sendSMS(memberPhoneNumber, message);
+  return true;
 };
 
 exports.initiate = async memberPhoneNumber => {
